@@ -6,10 +6,10 @@ import prisma from "../client.js";
 import jwt from "jsonwebtoken";
 
 const signToken = (user) => {
-    console.log("iddddd",user.id)
+    console.log("iddddd", user.id)
     let id = user.id
 
-    return jwt.sign({id}, process.env.JWT_SECRET, {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 };
@@ -19,9 +19,9 @@ const createSendToken = async (user, statusCode, req, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
         httpOnly: true,
-      };
+    };
 
-      console.log("aaaaaaaaaaaaaaa", token)
+    console.log("aaaaaaaaaaaaaaa", token)
 
     res.cookie("jwt", token, cookieOptions);
     // user.password = undefined;
@@ -52,7 +52,7 @@ const login = async (req, res, next) => {
         where: {
             email: email
         },
-      
+
     });
 
     if (!user || !(await correctPassword(password, user.password))) {
@@ -69,11 +69,12 @@ const login = async (req, res, next) => {
 
 
 const register = async (req, res, next) => {
-    const { first_name, last_name, password, email } = req.body;
+    const { name, password, email, phone, role, dob } = req.body;
 
-    if (!first_name || !email || !password) {
+    if (!name || !email || !password || !phone || !role || !dob) {
         throw new BadRequestError("please provide all values");
     }
+    const startDate = new Date(dob)
     const userAlreadyExists = await prisma.user.findUnique({
         where: {
             email: email
@@ -90,21 +91,16 @@ const register = async (req, res, next) => {
 
     const user = await prisma.user.create({
         data: {
-            first_name,
-            last_name,
+            name,
             email,
             password: hash,
+            phone, 
+            role, 
+            dob:startDate
         },
-        select: {
-            id: true,
-            first_name: true,
-            last_name: true,
-            email: true,
-            // Include other non-sensitive fields you need
-          },
     });
 
-    
+
     createSendToken(user, StatusCodes.CREATED, req, res);
 };
 

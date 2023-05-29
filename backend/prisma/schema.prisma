@@ -22,16 +22,15 @@ enum rolesEnum {
 }
 
 model user {
-  id        Int        @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  dob       DateTime
-  email     String     @unique
-  phone     String     @unique
+  dob       DateTime  @db.Date
+  email     String    @unique
+  phone     String    @unique
   password  String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   role      rolesEnum
-  @@unique([id, email,phone])
-}
 
- 
+  @@unique([id, email, phone])
+}
