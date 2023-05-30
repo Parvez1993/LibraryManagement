@@ -5,6 +5,7 @@ import router from "./routes/authRoutes.js";
 import notFoundMiddleware from "./middleware/notFoundMiddleware.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 import pkg from 'pg';
+import publisherRoutes from "./routes/publisherRoutes.js";
 const { Pool } = pkg;
 
 
@@ -28,6 +29,7 @@ app.post("/todos", async(req,res)=>{
 
 
 app.use("/api/auth", router);
+app.use("/api/publisher", publisherRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
